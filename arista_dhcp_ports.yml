@@ -1,0 +1,33 @@
+---
+- name: Configure Arista Core Switch for DHCP
+  hosts: arista
+  gather_facts: no
+  connection: network_cli
+ 
+  tasks:
+    - name: Create VLAN 98 for DHCP
+      eos_config:
+        lines:
+          - vlan 98
+          - name DHCP_VLAN
+ 
+    - name: Configure MikroTik uplink port (Ethernet1)
+      eos_config:
+        lines:
+          - interface Ethernet1
+          - switchport mode access
+          - switchport access vlan 98
+          - no shutdown
+ 
+    - name: Configure PC ports (Ethernet2, Ethernet3) 
+      eos_config:
+        lines:
+          - interface Ethernet2    #For more VLANs, add more interfaces here
+          - switchport mode access
+          - switchport access vlan 98
+          - no shutdown
+          - interface Ethernet3
+          - switchport mode access
+          - switchport access vlan 98
+          - no shutdown
+ 
