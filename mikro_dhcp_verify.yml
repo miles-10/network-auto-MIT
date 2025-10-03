@@ -1,0 +1,16 @@
+---
+- name: Verify DHCP leases on MikroTik
+  hosts: mikrotik
+  gather_facts: no
+  collections:
+    - community.routeros
+  tasks:
+    - name: Show DHCP leases
+      routeros_command:
+        commands:
+          - /ip dhcp-server lease print
+      register: dhcp_leases
+ 
+    - name: Display DHCP leases
+      debug:
+        var: dhcp_leases.stdout_lines

@@ -1,0 +1,27 @@
+---
+- name: Configure DHCP on MikroTik
+  hosts: mikrotik
+  gather_facts: no  
+  collections:
+    - community.routeros
+ 
+  tasks:
+    - name: Create DHCP IP Pool
+      routeros_command:
+        commands:
+          - /ip pool add name=dhcp_pool ranges=192.168.98.150-192.168.98.200
+ 
+    - name: Add DHCP Network
+      routeros_command:
+        commands:
+          - /ip dhcp-server network add address=192.168.98.0/24 gateway=192.168.98.144
+ 
+    - name: Add DHCP Server on ether2 #For more dHCP servers, add more interfaces here
+      routeros_command:
+        commands:
+          - /ip dhcp-server add name=dhcp1 interface=ether2 address-pool=dhcp_pool lease-time=1h disabled=no
+ 
+    - name: Enable DHCP Server
+      routeros_command:
+        commands:
+          - /ip dhcp-server enable dhcp1
